@@ -2,270 +2,197 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Matrix 3x3 Random Bit</title>
+<title>Matrix 3x3 A/B Random</title>
 
 <style>
-body{
-    font-family:'Segoe UI',sans-serif;
-    background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);
-    color:white;
-    text-align:center;
-    padding-top:60px;
-    margin:0;
-}
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+        color: white;
+        text-align: center;
+        padding-top: 40px;
+        margin: 0;
+    }
 
-h2{
-    margin-bottom:40px;
-}
+    h2 { margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; }
 
-.matrix{
-    display:grid;
-    grid-template-columns:repeat(3,90px);
-    gap:25px;
-    justify-content:center;
-    margin-bottom:50px;
-}
+    /* Nút Random chính */
+    .btn-random {
+        padding: 15px 50px;
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        background: linear-gradient(45deg, #00f2fe, #4facfe);
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 0 20px rgba(79, 172, 254, 0.4);
+        transition: 0.3s;
+        margin-bottom: 40px;
+        text-transform: uppercase;
+    }
 
-.cell{
-    height:90px;
-    border-radius:15px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:40px;
-    font-weight:bold;
-    cursor:pointer;
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.2);
-    backdrop-filter:blur(10px);
-    transition:0.2s;
-    box-shadow:0 0 15px rgba(0,255,255,0.2);
-}
+    .btn-random:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 30px #00f2fe;
+    }
 
-.cell:hover{
-    transform:scale(1.1);
-    box-shadow:0 0 30px #00ffff;
-}
+    .btn-random:active { transform: scale(0.95); }
 
-.result{
-    display:flex;
-    justify-content:center;
-    gap:15px;
-    margin:30px;
-}
+    /* Lưới ma trận 3x3 */
+    .matrix {
+        display: grid;
+        grid-template-columns: repeat(3, 110px); /* 3 cột dọc */
+        grid-template-rows: repeat(3, 110px);    /* 3 hàng ngang */
+        gap: 20px;
+        justify-content: center;
+        margin-bottom: 50px;
+    }
 
-.bitbox{
-    width:60px;
-    height:60px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:40px;
-    font-weight:bold;
-    background: red;
-    border:1px solid rgba(255,255,255,0.2);
-    box-shadow:0 0 15px rgba(0,255,255,0.2);
-}
+    .cell {
+        height: 110px;
+        width: 110px;
+        border-radius: 15px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 45px;
+        font-weight: bold;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        transition: 0.3s;
+    }
 
-.running{
-    box-shadow:0 0 25px #00ffff;
-}
+    /* Số nhỏ cố định phía trên (1-9) */
+    .cell-number {
+        position: absolute;
+        top: 10px;
+        left: 12px;
+        font-size: 30px;
+        color: yellow;
+        font-weight: normal;
+    }
 
-.flash{
-    animation:flash 0.4s ease-in-out 6;
-    background:linear-gradient(45deg,#ff00cc,#3333ff);
-}
+    /* Nội dung A hoặc B */
+    .cell-content {
+        color: #ff00ff;
+        text-shadow: 0 0 15px #ff00ff;
+    }
 
-@keyframes flash{
-    0%{opacity:1;}
-    50%{opacity:0.5; transform:scale(1.08);}
-    100%{opacity:1;}
-}
+    /* Hiệu ứng khi đang chạy random */
+    .spinning {
+        border-color: #00f2fe;
+        box-shadow: 0 0 20px rgba(0, 242, 254, 0.5);
+        animation: pulse 0.1s infinite;
+    }
 
-.result-wrapper{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    margin-top:20px;
-    gap:15px;
-}
-
-.number-display{
-    width:80px;
-    height:60px;
-    border-radius:14px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:28px;
-    font-weight:bold;
-    background:linear-gradient(45deg,#ff512f,#f09819);
-    color:white;
-    box-shadow:0 0 20px rgba(255,150,0,0.8);
-    animation:blink 1.5s infinite ease-in-out;
-}
-
-@keyframes blink{
-    0%{opacity:1; transform:scale(1);}
-    50%{opacity:0.6; transform:scale(1.05);}
-    100%{opacity:1; transform:scale(1);}
-}
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
 </style>
 </head>
 
-
-
-
-
 <body>
 
-<h2>Ma Trận Random 5 Bit</h2>
-<div id="result"></div>
+<h2>Ma Trận 3x3</h2>
+
+<button class="btn-random" onclick="rollMatrix()">BẮT ĐẦU</button>
 
 <div class="matrix" id="matrix"></div>
+
 <audio id="spinSound" preload="auto">
-    <source src="https://www.soundjay.com/misc/sounds/casino-slot-machine-01.mp3" type="audio/mpeg">
+    <source src="https://www.soundjay.com/misc/sounds/button-37.mp3" type="audio/mpeg">
 </audio>
 
-
-
-
-
-
-
 <script>
+    const matrixContainer = document.getElementById("matrix");
+    const spinSound = document.getElementById("spinSound");
+    const cellDisplays = [];
 
-const matrix = document.getElementById("matrix");
-const result = document.getElementById("result");
-const spinSound = document.getElementById("spinSound");
-
-const BIT_COUNT = 5;
-const SPIN_DURATION = 3000;
-
-spinSound.loop = true;
-
-/* ===== TẠO MA TRẬN 0 → 9 ===== */
-for(let i = 0; i <= 9; i++){
-    const cell = document.createElement("div");
-    cell.className = "cell";
-    cell.textContent = i;
-    cell.addEventListener("click", () => spin(i));
-    matrix.appendChild(cell);
-}
-
-/* ===== HÀM SHUFFLE ===== */
-function shuffle(array){
-    for(let i = array.length - 1; i > 0; i--){
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-}
-
-
-
-
-
-
-/* ===== SINH BIT THEO SỐ BẤM ===== */
-
-function generateBits(number){
-
-const bitPatterns = {
-
-0:["10001","11011","01011","01110","01001"],
-1:["01011","10001","00101","10111","01111"],
-2:["00111","10110","01111","10001","11011"],
-3:["11011","01000","01011","11101","01101"],
-4:["11101","00100","10110","01111","00010"],
-5:["10100","11100","01100","10101","00111"],
-6:["00110","11001","11011","10100","01000"],
-7:["10111","01111","00010","11110","10010"],
-8:["11011","00100","11110","11011","10010"],
-9:["11011","01000","10001","10100","00100"]
-
-};
-
-const patterns = bitPatterns[number];
-
-const randomPattern = patterns[Math.floor(Math.random()*patterns.length)];
-
-return randomPattern.split("");
-
-}
-
-
-
-
-
-/* ===== HIỆU ỨNG QUAY ===== */
-function spin(number){
-
-    result.innerHTML = "";
-
-    spinSound.currentTime = 0;
-    spinSound.play().catch(()=>{});
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "result-wrapper";
-    result.appendChild(wrapper);
-
-    const numberBox = document.createElement("div");
-    numberBox.className = "number-display";
-    numberBox.textContent = number;
-    wrapper.appendChild(numberBox);
-
-    const bitRow = document.createElement("div");
-    bitRow.className = "result";
-    wrapper.appendChild(bitRow);
-
-    const bitBoxes = [];
-
-    for(let i = 0; i < BIT_COUNT; i++){
-        const box = document.createElement("div");
-        box.className = "bitbox running";
-        bitRow.appendChild(box);
-        bitBoxes.push(box);
+    // Tạo ma trận 3x3 (9 ô, đánh số từ 1-9)
+    for (let i = 1; i <= 9; i++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        
+        const numLabel = document.createElement("span");
+        numLabel.className = "cell-number";
+        numLabel.textContent = i;
+        
+        const content = document.createElement("span");
+        content.className = "cell-content";
+        content.textContent = "?"; 
+        
+        cell.appendChild(numLabel);
+        cell.appendChild(content);
+        matrixContainer.appendChild(cell);
+        
+        cellDisplays.push({
+            container: cell,
+            text: content
+        });
     }
 
-    let startTime = null;
-
-    function animate(timestamp){
-
-        if(!startTime) startTime = timestamp;
-
-        const progress = timestamp - startTime;
-        const percent = Math.min(progress / SPIN_DURATION, 1);
-
-        const interval = 30 + (200 * percent);
-
-        if(progress % interval < 20){
-            const bits = generateBits(number);
-            bitBoxes.forEach((box, index)=>{
-                box.textContent = bits[index];
-            });
+    // Hàm xáo trộn mảng để vị trí ngẫu nhiên
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
         }
-
-        if(progress < SPIN_DURATION){
-            requestAnimationFrame(animate);
-        }
-        else{
-            bitBoxes.forEach(box=>{
-                box.classList.remove("running");
-                box.classList.add("flash");
-            });
-
-            spinSound.pause();
-            spinSound.currentTime = 0;
-        }
+        return array;
     }
 
-    requestAnimationFrame(animate);
-}
+    function rollMatrix() {
+        spinSound.currentTime = 0;
+        spinSound.play().catch(() => {});
 
+        // 1. Logic khống chế: Tạo mảng chứa tối đa 6A hoặc 6B
+        // Random số lượng A từ 3 đến 6 (Để B cũng tự động từ 3 đến 6)
+        const countA = Math.floor(Math.random() * 4) + 3; 
+        const countB = 9 - countA;
+        
+        let finalResults = [];
+        for(let i=0; i<countA; i++) finalResults.push("A");
+        for(let i=0; i<countB; i++) finalResults.push("b");
+        
+        // Trộn vị trí
+        shuffleArray(finalResults);
+
+        cellDisplays.forEach((item, index) => {
+            let iterations = 0;
+            const maxIterations = 15 + Math.floor(Math.random() * 10); 
+
+            item.container.classList.add("spinning");
+
+            const interval = setInterval(() => {
+                // Hiệu ứng nhảy chữ ngẫu nhiên lúc đang quay
+                item.text.textContent = Math.random() > 0.5 ? "A" : "B";
+                iterations++;
+
+                if (iterations >= maxIterations) {
+                    clearInterval(interval);
+                    item.container.classList.remove("spinning");
+                    
+                    // Gán kết quả thực tế từ mảng đã khống chế
+                    const finalChar = finalResults[index];
+                    item.text.textContent = finalChar;
+                    
+                    // Đổi màu theo chữ cái cuối cùng
+                    if(finalChar === "A") {
+                        item.text.style.color = "#00ffff";
+                        item.text.style.textShadow = "0 0 15px #00ffff";
+                    } else {
+                        item.text.style.color = "#ff00ff";
+                        item.text.style.textShadow = "0 0 15px #ff00ff";
+                    }
+                }
+            }, 60);
+        });
+    }
 </script>
+
 </body>
 </html>
-
-
