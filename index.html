@@ -1,353 +1,317 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numeric Pro - Merger & Scanner</title>
-    <style>
-        :root {
-            --neon-color: #00f2ff;
-            --bg-color: #050505;
-            --container-bg: #0a0a0a;
-            --border-glow: 0 0 10px rgba(0, 242, 255, 0.5);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12 yếu tố trong cuộc đời</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url('https://img.tripi.vn/cdn-cgi/image/width=700,height=700/https://gcs.tripi.vn/public-tripi/tripi-feed/img/489700rAB/anh-mo-ta.png');
+    background-size: cover; /* Ảnh tự giãn đầy màn hình */
+    background-position: center; /* Canh giữa */
+    background-repeat: no-repeat; /* Không lặp lại */
+        margin: 20px;
+        padding: 20px;
+        border: 5px solid #2a7ae2;
+        border-radius: 20px;
+    }
+     h1 {
+    font-size: 60px;
+    color: #fff;
+    letter-spacing: 3px;
+    text-align: center;
+    text-transform: uppercase;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
 
-        body {
-            background-color: var(--bg-color);
-            color: #ffffff;
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-        }
+  span {
+    display:inline-block;
+  animation:wave 2s ease-in-out infinite;
+  animation-delay:calc(var(--i) * 0.1s);
+  }
 
-        .main-container {
-            margin-top: 30px; /* Rule: 30px top */
-            margin-left: 3px;  /* Rule: 3px sides */
-            margin-right: 3px;
-            width: 100%;
-            max-width: 800px;
-            background: var(--container-bg);
-            padding: 15px;
-            border: 1px solid #333;
-            border-radius: 8px;
-            box-shadow: var(--border-glow);
-        }
+  /* Tạo độ trễ pha cho từng chữ */
+  span:nth-child(1) { animation-delay: 0s; }
+  span:nth-child(2) { animation-delay: 0.1s; }
+  span:nth-child(3) { animation-delay: 0.2s; }
+  span:nth-child(4) { animation-delay: 0.3s; }
+  span:nth-child(5) { animation-delay: 0.4s; }
+  span:nth-child(6) { animation-delay: 0.5s; }
+  span:nth-child(7) { animation-delay: 0.6s; }
+  span:nth-child(8) { animation-delay: 0.7s; }
+  span:nth-child(9) { animation-delay: 0.8s; }
+  span:nth-child(10) { animation-delay: 0.9s; }
 
-        /* 6 ô nhập số */
-        .slot-wrapper {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 8px;
-            margin-bottom: 15px;
-        }
+  /* Sóng sin */
+  @keyframes wave {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(-15px); }
+    75% { transform: translateY(15px); }
+  }
 
-        .slot {
-            height: 50px;
-            background: #111;
-            border: 2px solid #444;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--neon-color);
-            text-shadow: 0 0 5px var(--neon-color);
-        }
-
-        #input-slot {
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            border: none;
-            color: var(--neon-color);
-            text-align: center;
-            font-size: 1.5rem;
-            outline: none;
-        }
-
-        /* Thống kê */
-        .stats-bar {
-            font-size: 0.85rem;
-            color: #888;
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #111;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .stats-bar b { color: var(--neon-color); }
-
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        button, label {
-            flex: 1;
-            padding: 12px;
-            background: #1a1a1a;
-            border: 1px solid var(--neon-color);
-            color: var(--neon-color);
-            text-align: center;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            transition: 0.3s;
-            border-radius: 4px;
-        }
-
-        button:hover, label:hover {
-            background: var(--neon-color);
-            color: #000;
-        }
-
-        /* Log tìm kiếm */
-        #log-container {
-            height: 120px;
-            overflow-y: auto;
-            border: 1px solid #333;
-            background: #000;
-            padding: 10px;
-            margin-bottom: 15px;
-            font-size: 0.85rem;
-        }
-
-        .log-item {
-            padding: 6px;
-            border-bottom: 1px solid #222;
-            cursor: pointer;
-        }
-
-        /* Bảng hiển thị số trong file */
-        #data-display {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 2px;
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #222;
-            padding: 10px;
-            background: #000;
-        }
-
-        .data-cell {
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #111;
-            border: 1px solid #222;
-            font-family: monospace;
-            font-size: 0.9rem;
-            color: #666;
-            border-radius: 3px;
-        }
-
-        .highlight {
-            background: #ffff00 !important;
-            color: #000 !important;
-            font-weight: bold;
-            box-shadow: 0 0 8px #ffff00;
-        }
-    </style>
+  /* Hiệu ứng phát sáng */
+  @keyframes glow {
+    from {
+      text-shadow:
+        0 0 10px #fff,
+        0 0 20px #ff00de,
+        0 0 30px #ff00de,
+        0 0 40px #ff00de;
+    }
+    to {
+      text-shadow:
+        0 0 20px #00ffff,
+        0 0 40px #00ffff,
+        0 0 60px #00ffff,
+        0 0 80px #00ffff;
+    }
+  }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 20px;
+       
+    }
+    .box {
+        background-color: #B0CE88;
+        border: 2px solid #2a7ae2;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 12px rgba(0,0,0,0.2);
+    }
+    .title-line {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .dot {
+        font-size: 30px;
+        font-weight: bold;
+        color: #2a7ae2;
+        margin-right: 10px;
+    }
+    .type-title {
+        font-weight: bold;
+        color: #2a7ae2;
+        font-size: 20px;
+    }
+    .content-line {
+        margin-left: 38px;
+        margin-bottom: 5px;
+        position: relative;
+    }
+    .content-line::before {
+        content: "•";
+        position: absolute;
+        left: -20px;
+        color: #2a7ae2;
+        font-weight: bold;
+    }
+</style>
 </head>
 <body>
+<h1 id="text"><span>1</span><span>2</span>&nbsp;<span>y</span><span>ế</span><span>u</span>&nbsp;<span>t</span><span>ố</span>&nbsp;<span>t</span><span>r</span><span>o</span><span>n</span><span>g</span>&nbsp;<span>c</span><span>u</span><span>ộ</span><span>c</span>&nbsp;<span>s</span><span>ố</span><span>n</span><span>g</span></h1>
 
-<div class="main-container">
-    <div class="slot-wrapper">
-        <div class="slot" id="s0"></div>
-        <div class="slot" id="s1"></div>
-        <div class="slot" id="s2"></div>
-        <div class="slot" id="s3"></div>
-        <div class="slot" id="s4"></div>
-        <div class="slot">
-            <input type="number" id="input-slot" inputmode="numeric" pattern="[0-9]*" placeholder="?">
+<div class="grid">
+
+    <!-- 1 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">1.</div>
+           <div class="type-title">QUYỀN LỰC</div>
+    </div>
+         <div class="content-line">Quyền lực là khả năng sử dụng những thứ xung quanh theo ý muốn của mình.</div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
+    </div>
+    <!-- 2 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">2.</div>
+             <div class="type-title">Dù người ta nghĩ gì, nói gì, làm gì thì cũng không nằm ngoài mấy trường hợp sau:</div>
+     </div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
+    </div>
+
+    <!-- 3 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">3.</div>
+            <div class="type-title">Tại sao bạn lại chọn những điều này?</div>
+  </div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
+    </div>
+
+    <!-- 4 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">4.</div>
+            <div class="type-title">Bạn sẽ làm gì nếu :</div>
+  </div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
+    </div>
+
+    <!-- 5 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">5.</div>
+            <div class="type-title">Những lưu ý quan trọng:</div>
+ </div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
+    </div>
+
+    <!-- 6 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">6.</div>
+            <div class="type-title">Nhìn vào tương lai :</div>
+  </div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
+    </div>
+
+    <!-- 7 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">7.</div>
+            <div class="type-title">Thực tế cuộc sống :</div>
         </div>
+   
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
     </div>
 
-    <div class="stats-bar">
-        <span>Tổng chữ số: <b id="count-total">0</b></span>
-        <span id="status-msg">Chưa có dữ liệu</span>
-    </div>
-
-    <div class="btn-group">
-        <label for="file-upload">Upload Cộng Dồn</label>
-        <input type="file" id="file-upload" multiple hidden accept=".txt">
-        <button onclick="clearData()">Xóa Tất Cả</button>
-        <button onclick="exportData()">Xuất File Nối</button>
-    </div>
-
-    <div id="log-container"></div>
-
-    <div id="data-display"></div>
-</div>
-
-<script>
-    const inputSlot = document.getElementById('input-slot');
-    const logContainer = document.getElementById('log-container');
-    const dataDisplay = document.getElementById('data-display');
-    const fileUpload = document.getElementById('file-upload');
-    const countTotal = document.getElementById('count-total');
-    const statusMsg = document.getElementById('status-msg');
+    <!-- 8 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">8.</div>
+            <div class="type-title">Và.....</div>
+        </div>
     
-    let slots = ["", "", "", "", ""];
-    let masterData = localStorage.getItem('masterData') || "";
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
+    </div>
 
-    // Tự động focus và tải dữ liệu cũ
-    window.onload = () => {
-        inputSlot.focus();
-        if (masterData) {
-            renderDataCells();
-            updateStats("Đã khôi phục dữ liệu");
-        }
-    };
+    <!-- 9 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">9.</div>
+            <div class="type-title">Làm người sẽ gặp những gì:</div>
+        </div>
+ 
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
+    </div>
 
-    // Click bất kỳ đâu cũng focus về ô nhập
-    document.addEventListener('click', (e) => {
-        if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'LABEL') {
-            inputSlot.focus();
-        }
+    <!-- 10 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">10.</div>
+            <div class="type-title">Bài học rút ra sau nhiều năm chiêm nghiệm thực tế :</div>
+        </div>
+ 
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
+    </div>
+
+    <!-- 11 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">11.</div>
+            <div class="type-title">Cách cuộc sống vận hành</div>
+        </div>
+ 
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
+    </div>
+    <!-- 12 -->
+    <div class="box">
+        <div class="title-line">
+            <div class="dot">12.</div>
+            <div class="type-title"> Sau tất cả :</div>
+        </div>
+  
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         <div class="content-line"></div>
+         
+    </div>
+
+</div>
+<script>
+    // Gán chỉ số cho từng span để tính delay
+    document.querySelectorAll('#text span').forEach((span, i) => {
+      span.style.setProperty('--i', i);
     });
-
-    // Xử lý nhập ô 6 -> Dịch trái
-    inputSlot.addEventListener('input', (e) => {
-        const val = e.target.value.slice(-1);
-        if (val >= '0' && val <= '9') {
-            slots.shift();
-            slots.push(val);
-            
-            for (let i = 0; i < 5; i++) {
-                document.getElementById(`s${i}`).innerText = slots[i];
-            }
-            
-            checkPattern();
-        }
-        inputSlot.value = "";
-    });
-
-    // Xử lý Upload & Nối file (Lấy TOÀN BỘ số)
-    fileUpload.addEventListener('change', async (e) => {
-        let newContent = "";
-        const files = e.target.files;
-        if (files.length === 0) return;
-
-        for (let file of files) {
-            const text = await file.text();
-            // CHỈ lấy chữ số, giữ nguyên mọi số tìm thấy
-            const matches = text.match(/\d/g);
-            if (matches) {
-                newContent += matches.join("");
-            }
-        }
-        
-        masterData += newContent;
-        localStorage.setItem('masterData', masterData);
-        renderDataCells();
-        updateStats(`+${newContent.length} số mới`);
-    });
-
-    // Cập nhật thống kê số lượng
-    function updateStats(msg) {
-        countTotal.innerText = masterData.length.toLocaleString();
-        statusMsg.innerText = msg;
-    }
-
-    // Vẽ dữ liệu vào bảng lưới
-    function renderDataCells() {
-        dataDisplay.innerHTML = "";
-        const chars = masterData.split("");
-        // Chỉ vẽ tối đa 5000 ô để tránh lag trình duyệt nếu file quá lớn
-        const displayLimit = 5000; 
-        
-        chars.forEach((char, index) => {
-            if (index < displayLimit) {
-                const span = document.createElement('span');
-                span.className = 'data-cell';
-                span.id = `cell-${index}`;
-                span.innerText = char;
-                dataDisplay.appendChild(span);
-            }
-        });
-
-        if (chars.length > displayLimit) {
-            const note = document.createElement('div');
-            note.style.width = "100%";
-            note.style.padding = "10px";
-            note.style.color = "#555";
-            note.innerText = `... và ${(chars.length - displayLimit).toLocaleString()} số khác (chỉ hiển thị 5000 số đầu để tránh lag)`;
-            dataDisplay.appendChild(note);
-        }
-    }
-
-    // Tìm kiếm dãy 5 số
-    function checkPattern() {
-        const searchStr = slots.join("");
-        if (searchStr.length < 5) return;
-
-        // Tìm tất cả vị trí (không chỉ vị trí đầu tiên)
-        let pos = masterData.indexOf(searchStr);
-        if (pos !== -1) {
-            const timestamp = new Date().toLocaleTimeString();
-            const logEntry = document.createElement('div');
-            logEntry.className = 'log-item';
-            logEntry.innerHTML = `<span style="color:var(--neon-color)">[${timestamp}]</span> Tìm thấy: <b style="color:#fff">${searchStr}</b> tại vị trí ${pos}`;
-            
-            logEntry.onclick = () => scrollToPattern(pos, searchStr.length);
-            logContainer.prepend(logEntry);
-            
-            // Hiệu ứng rung ô nhập khi tìm thấy
-            inputSlot.parentElement.style.borderColor = "yellow";
-            setTimeout(() => inputSlot.parentElement.style.borderColor = "#444", 500);
-        }
-    }
-
-    // Cuộn tới vị trí số trong lưới
-    function scrollToPattern(startIndex, length) {
-        document.querySelectorAll('.data-cell').forEach(el => el.classList.remove('highlight'));
-
-        for (let i = 0; i < length; i++) {
-            const cell = document.getElementById(`cell-${startIndex + i}`);
-            if (cell) cell.classList.add('highlight');
-        }
-
-        const firstCell = document.getElementById(`cell-${startIndex}`);
-        if (firstCell) {
-            firstCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else {
-            alert("Số này nằm ở phần dữ liệu ẩn (ngoài giới hạn hiển thị 5000 ô)!");
-        }
-    }
-
-    // Xuất file đã nối
-    function exportData() {
-        if (!masterData) return alert("Không có dữ liệu để xuất!");
-        const blob = new Blob([masterData], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `file_noi_${Date.now()}.txt`;
-        a.click();
-        URL.revokeObjectURL(url);
-    }
-
-    // Xóa dữ liệu
-    function clearData() {
-        if (confirm("Xác nhận xóa sạch toàn bộ dữ liệu?")) {
-            masterData = "";
-            localStorage.removeItem('masterData');
-            dataDisplay.innerHTML = "";
-            logContainer.innerHTML = "";
-            slots = ["", "", "", "", ""];
-            for (let i = 0; i < 5; i++) document.getElementById(`s${i}`).innerText = "";
-            updateStats("Đã xóa sạch");
-        }
-    }
-</script>
-
+  </script>
 </body>
 </html>
+
+
